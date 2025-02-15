@@ -101,4 +101,3 @@ If you use this code, please cite the original paper:
 
 ## 📄 License
 MIT License. See [LICENSE](LICENSE) for details.
-```

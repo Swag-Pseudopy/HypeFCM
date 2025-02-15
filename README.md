@@ -71,7 +71,7 @@ plot_clusters(data, membership, centroids, dim=2)
 | FCM          | 0.471         | 0.542  | 0.584  |
 | K-means      | 0.491         | 0.527  | 0.508  |
 
-![Cluster Visualization](figures/hfcm_demo.png)
+![Cluster Visualization](figure/hfcm_wine.jpg)
 
 ---
 

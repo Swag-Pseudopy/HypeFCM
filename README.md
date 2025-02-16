@@ -33,31 +33,23 @@
 ## 🚀 Quick Start
 
 ### Run HFCM on the Wine Dataset
-```python
-from src.hfcm import HFCM
-from utils import load_data, plot_clusters
-
-# Load data (replace with your dataset)
-data, labels = load_data("data/wine.csv")
-
-# Initialize HFCM
-model = HFCM(
-    n_clusters=3,      # Number of clusters
-    m=2.0,             # Fuzziness parameter
-    curvature=1.0,     # Hyperbolic space curvature
-    filtration_k=5,    # Retain top 5 connections
-    max_iter=1000      # Max optimization steps
-)
-
-# Fit the model
-centroids, membership = model.fit(data)
-
-# Evaluate
-print(f"Adjusted Rand Index: {model.adjusted_rand_score(labels)}")
-print(f"Normalized Mutual Info: {model.normalized_mutual_info_score(labels)}")
-
-# Visualize clusters (2D or 3D)
-plot_clusters(data, membership, centroids, dim=2)
+```python# Example usage (works in .py and .ipynb)
+if __name__ == "__main__":
+    # Load data (replace with your dataset)
+    data = np.genfromtxt("wine.csv", delimiter=",", skip_header=1)
+    X = data[:, :-1]
+    true_labels = data[:, -1].astype(int)
+    
+    # Run HFCM
+    model = HFCM(n_clusters=3, curvature=1.0, filtration_k=5)
+    model.fit(X)
+    
+    # Evaluate
+    scores = model.evaluate(true_labels)
+    print(f"ARI: {scores['ARI']:.3f}, NMI: {scores['NMI']:.3f}")
+    
+    # Visualize
+    model.visualize(X, dim=2)
 ```
 
 ---

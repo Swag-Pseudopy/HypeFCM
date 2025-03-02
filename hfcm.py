@@ -1,6 +1,6 @@
 """
 Hyperbolic Fuzzy C-Means (HFCM) Clustering
-Author: Your Name
+Authors: Swagato Das, Arghya Pratihar, Swagatam Das
 Reference: "Hyperbolic Fuzzy C-Means with Adaptive Weight-Based Filtering" (Das et al.)
 
 A unified script for clustering in non-Euclidean spaces using the Poincaré ball model.

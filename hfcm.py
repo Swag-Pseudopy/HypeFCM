@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 from sklearn.manifold import TSNE
 
-# Helper functions for hyperbolic operations
+# Functions for hyperbolic operations
 def mob_add(a, b, c=1.0):
     """Möbius addition in the Poincaré ball model."""
     numerator = (1 + 2 * c * np.dot(a, b) + c * np.dot(b, b)) * a + (1 - c * np.dot(a, a)) * b
@@ -119,13 +119,13 @@ class HFCM:
             ax = plt.axes(projection='3d')
             ax.scatter(X_vis[:, 0], X_vis[:, 1], X_vis[:, 2], c=self.predict(), cmap='viridis', alpha=0.6)
             #ax.scatter(self.centroids[:, 0], self.centroids[:, 1], self.centroids[:, 2], c='red', marker='X', s=200)
-        plt.title("HFCM Clustering Results")
+        plt.title("HFCM Clustering Result")
         plt.show()
 
 # Example usage (works in .py and .ipynb)
 if __name__ == "__main__":
-    # Load data (replace with your dataset)
-    eps = 1e-9      #epsilon...
+    # Load data
+    eps = 1e-9   
     data = np.genfromtxt("wine.csv", delimiter=",", skip_header=1)
     X = data[:, :-1]
     norm = np.linalg.norm(X,axis = 0)

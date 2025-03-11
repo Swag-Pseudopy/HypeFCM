@@ -13,7 +13,7 @@
 - Adaptive filtration to retain top-𝑘 most relevant cluster-point relationships.  
 - Fuzzy membership initialization via **Dirichlet distribution**.  
 - Visualization tools for 2D/3D clusters and ablation studies.  
-- Benchmarks against FCM, K-means, and PCM on synthetic/real-world datasets.
+- Benchmarks against FCM, K-means, and HSFC on synthetic/real-world datasets.
 
 ---
 
@@ -32,7 +32,7 @@
 
 ## 🚀 Quick Start
 
-### Run HFCM on the Wine Dataset
+### Run HypeFCM on the Wine Dataset
 ```python# Example usage (works in .py and .ipynb)
 if __name__ == "__main__":
     # Load data (replace with your dataset)

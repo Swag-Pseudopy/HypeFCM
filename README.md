@@ -20,8 +20,8 @@
 ## 📥 Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/HFCM-Clustering.git
-   cd HFCM-Clustering
+   git clone https://github.com/yourusername/HypeFCM-Clustering.git
+   cd HypeFCM-Clustering
    ```
 2. Install dependencies:
    ```bash
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     true_labels = data[:, -1].astype(int)
     
     # Run HypeFCM
-    model = HFCM(n_clusters=3, curvature=1.0, filtration_k=5)
+    model = HypeFCM(n_clusters=3, curvature=1.0, filtration_k=5)
     model.fit(X)
     
     # Evaluate
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 | K-means      | 0.491         | 0.527  | 0.508  |
 | HSFC     | 0.493         | 0.548  | 0.498  |
 
-![Cluster Visualization](figure/hfcm_wine.jpg)
+![Cluster Visualization](figure/HypeFCM_wine.jpg)
 
 ---
 

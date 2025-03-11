@@ -1,5 +1,5 @@
 """
-Hyperbolic Fuzzy C-Means (HFCM) Clustering
+Hyperbolic Fuzzy C-Means (HypeFCM) Clustering
 Authors: Swagato Das, Arghya Pratihar, Swagatam Das
 Reference: "Hyperbolic Fuzzy C-Means with Adaptive Weight-Based Filtering" (Das et al.)
 
@@ -32,7 +32,7 @@ def mobius_scalar_mul(r, a, c=1.0):
     norm = np.clip((np.sum(a * a) * c) ** 0.5, -1 + eps, 1 - eps)
     return np.tanh(r * np.arctanh(norm)) * (a / norm)
 
-class HFCM:
+class HypeFCM:
     """
     Hyperbolic Fuzzy C-Means clustering with adaptive weight-based filtering.
     
@@ -55,7 +55,7 @@ class HFCM:
         self.membership = None
 
     def fit(self, X):
-        """Fit HFCM to the data."""
+        """Fit HypeFCM to the data."""
         n_samples, n_features = X.shape
         self.membership = np.random.dirichlet(np.ones(self.n_clusters), n_samples)
         
@@ -119,7 +119,7 @@ class HFCM:
             ax = plt.axes(projection='3d')
             ax.scatter(X_vis[:, 0], X_vis[:, 1], X_vis[:, 2], c=self.predict(), cmap='viridis', alpha=0.6)
             #ax.scatter(self.centroids[:, 0], self.centroids[:, 1], self.centroids[:, 2], c='red', marker='X', s=200)
-        plt.title("HFCM Clustering Result")
+        plt.title("HypeFCM Clustering Result")
         plt.show()
 
 # Example usage (works in .py and .ipynb)
@@ -132,8 +132,8 @@ if __name__ == "__main__":
     X = X/max(norm+eps)
     true_labels = data[:, -1].astype(int)
     
-    # Run HFCM
-    model = HFCM(n_clusters=3, curvature=1.0, filtration_k=5)
+    # Run HypeFCM
+    model = HypeFCM(n_clusters=3, curvature=1.0, filtration_k=5)
     model.fit(X)
     
     # Evaluate

@@ -40,7 +40,7 @@ if __name__ == "__main__":
     X = data[:, :-1]
     true_labels = data[:, -1].astype(int)
     
-    # Run HFCM
+    # Run HypeFCM
     model = HFCM(n_clusters=3, curvature=1.0, filtration_k=5)
     model.fit(X)
     
@@ -59,9 +59,10 @@ if __name__ == "__main__":
 ### Performance on Synthetic Datasets (ARI / NMI)
 | Method       | Cure-t1-2000n | Smile1 | 3MC    |
 |--------------|---------------|--------|--------|
-| **HFCM**     | **0.923**     | **0.630** | **0.584** |
+| **HypeFCM**     | **0.823**     | **0.594** | **0.586** |
 | FCM          | 0.471         | 0.542  | 0.584  |
 | K-means      | 0.491         | 0.527  | 0.508  |
+| HSFC     | 0.493         | 0.548  | 0.498  |
 
 ![Cluster Visualization](figure/hfcm_wine.jpg)
 

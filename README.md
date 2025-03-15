@@ -9,7 +9,7 @@
 (Swagato Das, Arghya Pratihar, Swagatam Das).
 
 👉 **Key Features**:  
-- Hyperbolic distance computations using the **Poincaré ball model**.  
+- Hyperbolic distance computations using the **Poincaré Disc. model**.  
 - Adaptive filtration to retain top-𝑘 most relevant cluster-point relationships.  
 - Fuzzy membership initialization via **Dirichlet distribution**.  
 - Visualization tools for 2D/3D clusters and ablation studies.  

@@ -14,7 +14,7 @@ from sklearn.manifold import TSNE
 
 # Functions for hyperbolic operations
 def mob_add(a, b, c=1.0):
-    """Möbius addition in the Poincaré ball model."""
+    """Möbius addition in the Poincaré disc model."""
     numerator = (1 + 2 * c * np.dot(a, b) + c * np.dot(b, b)) * a + (1 - c * np.dot(a, a)) * b
     denominator = 1 + 2 * c * np.dot(a, b) + c**2 * np.dot(a, a) * np.dot(b, b)
     return numerator / denominator
@@ -27,7 +27,7 @@ def hyperbolic_dist(a, b, c=1.0):
     return (2 / np.sqrt(c)) * np.arctanh(norm)
 
 def mobius_scalar_mul(r, a, c=1.0):
-    """Möbius scalar multiplication in the Poincaré ball model."""
+    """Möbius scalar multiplication in the Poincaré disc model."""
     eps = 1e-9
     norm = np.clip((np.sum(a * a) * c) ** 0.5, -1 + eps, 1 - eps)
     return np.tanh(r * np.arctanh(norm)) * (a / norm)

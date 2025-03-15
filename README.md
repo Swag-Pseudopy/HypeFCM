@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
 ## 📊 Results
 
-### Performance on Synthetic Datasets (ARI / NMI)
+### Performance on Synthetic Datasets (ARI)
 | Method       | Cure-t1-2000n | Smile1 | 3MC    |
 |--------------|---------------|--------|--------|
 | **HypeFCM**     | **0.823**     | **0.594** | **0.586** |

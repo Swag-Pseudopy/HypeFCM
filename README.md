@@ -6,7 +6,7 @@
 
 **Official implementation** of the paper:  
 *"Hyperbolic Fuzzy C-Means with Adaptive Weight-Based Filtering for Clustering in Non-Euclidean Spaces"*  
-(Swagato Das, Arghya Pratihar, Swagatam Das).
+.
 
 👉 **Key Features**:  
 - Hyperbolic distance computations using the **Poincaré Disc model**.  
@@ -15,18 +15,6 @@
 - Visualization tools for 2D/3D clusters and ablation studies.  
 - Benchmarks against FCM, K-means, and HSFC on synthetic/real-world datasets.
 
----
-
-## 📥 Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Swag-Pseudopy/HypeFCM.git
-   cd HypeFCM
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
 
 ---
 

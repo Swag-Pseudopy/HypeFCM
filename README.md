@@ -64,7 +64,7 @@ if __name__ == "__main__":
 |----------------|--------------------------------------|---------|
 | `n_clusters`   | Number of clusters                   | `3`     |
 | `m`            | Fuzziness parameter (≥1)             | `2.0`   |
-| `curvature`    | Curvature of hyperbolic space (≥0)   | `1.0`   |
+| `curvature`    | Curvature of Poincaré disc (≥0)   | `1.0`   |
 | `filtration_k` | Top-𝑘 connections retained per point | `5`     |
 | `max_iter`     | Maximum optimization iterations      | `1000`  |
 

@@ -5,8 +5,7 @@
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 
 **Official implementation** of the paper:  
-*"Hyperbolic Fuzzy C-Means with Adaptive Weight-Based Filtering for Clustering in Non-Euclidean Spaces"*  
-.
+*"Hyperbolic Fuzzy C-Means with Adaptive Weight-Based Filtering for Clustering in Non-Euclidean Spaces".* 
 
 👉 **Key Features**:  
 - Hyperbolic distance computations using the **Poincaré Disc model**.  

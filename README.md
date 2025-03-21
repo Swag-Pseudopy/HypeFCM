@@ -64,6 +64,10 @@ if __name__ == "__main__":
 | K-means      | 0.491         | 0.527  | 0.508  |
 | HSFC     | 0.493         | 0.548  | 0.498  |
 
+--- 
+
+## Cluster Visualization of Wine Dataset from the UCI Machine Learning Repository
+
 ![Cluster Visualization](figure/HypeFCM_wine.jpg)
 
 ---
@@ -77,18 +81,7 @@ if __name__ == "__main__":
 | `filtration_k` | Top-𝑘 connections retained per point | `5`     |
 | `max_iter`     | Maximum optimization iterations      | `1000`  |
 
----
 
-## 📜 Citation
-If you use this code, please cite the original paper:
-```bibtex
-@article{das2025hyperbolic,
-  title={Hyperbolic Fuzzy C-Means with Adaptive Weight-Based Filtering for Clustering in Non-Euclidean Spaces},
-  author={Das, Swagato and Pratihar, Arghya and Das, Swagatam},
-  journal={arXiv preprint arXiv:XXXX.XXXX},
-  year={2025}
-}
-```
 
 ---
 

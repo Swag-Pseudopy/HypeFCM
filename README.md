@@ -21,7 +21,7 @@
 1. Clone the repository:
    ```bash
    git clone https://github.com/Swag-Pseudopy/HypeFCM.git
-   cd HypeFCM-Clustering
+   cd HypeFCM
    ```
 2. Install dependencies:
    ```bash

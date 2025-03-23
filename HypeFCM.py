@@ -81,7 +81,7 @@ class HypeFCM:
             new_membership = inv_dist / np.sum(inv_dist, axis=1, keepdims=True)
             
             # Check convergence
-            if np.linalg.norm(new_membership - self.membership) < self.tol:
+            if [hyperbolic_dist(new_membership[i] - self.membership[i])**2 fot i in range(len(new_membership))].sum() < self.tol:
                 break
             self.membership = new_membership
         

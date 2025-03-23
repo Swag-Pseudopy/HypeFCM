@@ -1,6 +1,6 @@
 """
 Hyperbolic Fuzzy C-Means (HypeFCM) Clustering
-Reference: "Hyperbolic Fuzzy C-Means with Adaptive Weight-based Filtering"
+Reference: "Hyperbolic Fuzzy C-Means with Adaptive Weight-based Filtering for Clustering in Non-Euclidean Spaces"
 
 A unified script for clustering in non-Euclidean spaces using the Poincaré ball model.
 Run directly as a .py script or in a Jupyter notebook.

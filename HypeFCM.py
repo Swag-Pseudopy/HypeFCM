@@ -11,25 +11,41 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 from sklearn.manifold import TSNE
 
-# Functions for hyperbolic operations
-def mob_add(a, b, c=1.0):
+def mobius_add(x, y):
     """Möbius addition in the Poincaré disc model."""
-    numerator = (1 + 2 * c * np.dot(a, b) + c * np.dot(b, b)) * a + (1 - c * np.dot(a, a)) * b
-    denominator = 1 + 2 * c * np.dot(a, b) + c**2 * np.dot(a, a) * np.dot(b, b)
+    x2 = np.sum(x ** 2, axis=-1, keepdims=True)
+    y2 = np.sum(y ** 2, axis=-1, keepdims=True)
+    xy = np.sum(x * y, axis=-1, keepdims=True)
+    numerator = (1 + 2 * xy + y2) * x + (1 - x2) * y
+    denominator = 1 + 2 * xy + x2 * y2
     return numerator / denominator
 
-def hyperbolic_dist(a, b, c=1.0):
-    """Compute hyperbolic distance between two points in the Poincaré disc."""
-    eps = 1e-9
-    mob_diff = mob_add(-a, b, c)
-    norm = np.clip((c * np.sum(mob_diff * mob_diff)) ** 0.5, -1 + eps, 1 - eps)
-    return (2 / np.sqrt(c)) * np.arctanh(norm)
+def log_map(x, y, eps=1e-8):
+    """Logarithmic map in the Poincaré disc model."""
+    mobius_diff = mobius_add(-x, y)
+    norm = np.linalg.norm(mobius_diff, axis=-1, keepdims=True)
+    norm = np.maximum(norm, eps)  # prevent division by zero
+    lambda_x = 2 / (1 - np.sum(x ** 2, axis=-1, keepdims=True))
+    return (2 / lambda_x) * np.arctanh(norm) * (mobius_diff / norm)
 
-def mobius_scalar_mul(r, a, c=1.0):
-    """Möbius scalar multiplication in the Poincaré disc model."""
-    eps = 1e-9
-    norm = np.clip((np.sum(a * a) * c) ** 0.5, -1 + eps, 1 - eps)
-    return np.tanh(r * np.arctanh(norm)) * (a / norm)
+def exp_map(x, v, eps=1e-8):
+    """Exponential map in the Poincaré disc model."""
+    norm = np.linalg.norm(v, axis=-1, keepdims=True)
+    norm = np.maximum(norm, eps)
+    lambda_x = 2 / (1 - np.sum(x ** 2, axis=-1, keepdims=True))
+    second_term = np.tanh(lambda_x * norm / 2) * (v / norm)
+    return mobius_add(x, second_term)
+
+def poincare_distance(x, y, eps=1e-8):
+    """Compute hyperbolic distance between two points in the Poincaré disc."""
+    diff = mobius_add(-x, y)
+    norm = np.linalg.norm(diff, axis=-1)
+    norm = np.clip(norm, 0, 1 - eps)  # avoid arctanh(1)
+    return 2 * np.arctanh(norm)
+
+def initialize_membership(n, c):
+    """Initialize fuzzy membership matrix."""
+    return np.random.dirichlet(np.ones(c), size=n)
 
 class HypeFCM:
     """
@@ -38,52 +54,67 @@ class HypeFCM:
     Args:
         n_clusters (int): Number of clusters (default=3).
         m (float): Fuzziness parameter (default=2.0).
-        curvature (float): Curvature of hyperbolic space (default=1.0).
-        filtration_k (int): Retain top-k closest points per centroid (default=5).
         max_iter (int): Maximum iterations (default=100).
         tol (float): Convergence threshold (default=1e-5).
+        filtration_k (int): Retain top-k closest points per centroid (default=5).
     """
-    def __init__(self, n_clusters=3, m=2.0, curvature=1.0, filtration_k=5, max_iter=100, tol=1e-5):
+    def __init__(self, n_clusters=3, m=2.0, max_iter=100, tol=1e-5, filtration_k=5):
         self.n_clusters = n_clusters
         self.m = m
-        self.curvature = curvature
-        self.filtration_k = filtration_k
         self.max_iter = max_iter
         self.tol = tol
+        self.filtration_k = filtration_k
         self.centroids = None
         self.membership = None
+        
+    def _update_centroids(self, X, W, V_prev):
+        """Update centroids using exponential and logarithmic maps."""
+        V = []
+        for j in range(self.n_clusters):
+            weights = W[:, j] ** self.m
+            tangent_vectors = np.array([
+                log_map(V_prev[j], X[i]) * weights[i] for i in range(len(X))
+            ])
+            mean_vec = np.sum(tangent_vectors, axis=0) / np.sum(weights)
+            new_centroid = exp_map(V_prev[j], mean_vec)
+            V.append(new_centroid)
+        return np.stack(V)
+    
+    def _update_membership(self, X, V):
+        """Update membership weights with optional filtration."""
+        n = len(X)
+        U = np.array([[poincare_distance(X[i], V[j]) ** 2 for j in range(self.n_clusters)] for i in range(n)])
+        
+        if self.filtration_k is not None:
+            top_k = np.argsort(U, axis=1)[:, :self.filtration_k]
+            mask = np.zeros_like(U)
+            for i in range(n):
+                mask[i, top_k[i]] = 1
+            U = np.where(mask, U, np.inf)
 
+        U_inv = np.where(U == np.inf, 0, U ** (-1 / (self.m - 1)))
+        row_sums = U_inv.sum(axis=1, keepdims=True)
+        W = np.divide(U_inv, row_sums, where=row_sums != 0)
+        return W
+    
     def fit(self, X):
         """Fit HypeFCM to the data."""
-        n_samples, n_features = X.shape
-        self.membership = np.random.dirichlet(np.ones(self.n_clusters), n_samples)
+        # Normalize to Poincaré ball
+        norm_X = np.clip(np.linalg.norm(X, axis=1, keepdims=True), a_min=1e-5, a_max=None)
+        X = 0.9 * X / norm_X  # embed in the unit ball (radius < 1)
+        
+        n = X.shape[0]
+        self.membership = initialize_membership(n, self.n_clusters)
+        self.centroids = X[np.random.choice(n, self.n_clusters, replace=False)]  # random init
         
         for _ in range(self.max_iter):
-            # Update centroids using Möbius operations
-            temp = np.zeros_like(X)
-            for j in range(self.n_clusters):
-                for i in range(n_samples):
-                    temp[j] = mob_add(temp[j],
-                                      mobius_scalar_mul((np.sum(self.membership[:, j] ** self.m)**(-1))*self.membership[i, j] ** self.m,
-                                                        X[i],self.curvature),self.curvature)
-            self.centroids = np.array(temp)
+            V_new = self._update_centroids(X, self.membership, self.centroids)
+            W_new = self._update_membership(X, V_new)
             
-            # Compute distances and apply filtration
-            distances = np.array([[hyperbolic_dist(X[i], self.centroids[j], self.curvature)
-                                  for j in range(self.n_clusters)] for i in range(n_samples)])
-            sorted_indices = np.argsort(distances, axis=1)
-            mask = np.zeros_like(distances, dtype=bool)
-            mask[np.arange(n_samples)[:, None], sorted_indices[:, :self.filtration_k]] = True
-            filtered_distances = np.where(mask, distances, 0) + 1e-10
-            
-            # Update membership weights
-            inv_dist = 1.0 / filtered_distances
-            new_membership = inv_dist / np.sum(inv_dist, axis=1, keepdims=True)
-            
-            # Check convergence
-            if np.linalg.norm(new_membership[i] - self.membership[i]) < self.tol:
+            if np.linalg.norm(W_new - self.membership) < self.tol:
                 break
-            self.membership = new_membership
+                
+            self.centroids, self.membership = V_new, W_new
         
         return self
 
@@ -113,26 +144,21 @@ class HypeFCM:
         plt.figure(figsize=(8, 6))
         if dim == 2:
             plt.scatter(X_vis[:, 0], X_vis[:, 1], c=self.predict(), cmap='viridis', alpha=0.6)
-            #plt.scatter(self.centroids[:, 0], self.centroids[:, 1], c='red', marker='X', s=200)
         elif dim == 3:
             ax = plt.axes(projection='3d')
             ax.scatter(X_vis[:, 0], X_vis[:, 1], X_vis[:, 2], c=self.predict(), cmap='viridis', alpha=0.6)
-            #ax.scatter(self.centroids[:, 0], self.centroids[:, 1], self.centroids[:, 2], c='red', marker='X', s=200)
         plt.title("HypeFCM Clustering Result")
         plt.show()
 
 # Example usage (works in .py and .ipynb)
 if __name__ == "__main__":
     # Load data
-    eps = 1e-9   
     data = np.genfromtxt("wine.csv", delimiter=",", skip_header=1)
     X = data[:, :-1]
-    norm = np.linalg.norm(X,axis = 0)
-    X = X/max(norm+eps)
     true_labels = data[:, -1].astype(int)
     
     # Run HypeFCM
-    model = HypeFCM(n_clusters=3, curvature=1.0, filtration_k=5)
+    model = HypeFCM(n_clusters=3, filtration_k=5)
     model.fit(X)
     
     # Evaluate
